@@ -5,6 +5,7 @@ in pkgs.mkShell {
     python3
     python3Packages.jax
     (python3Packages.jaxlib.override { cudaSupport = true; })
+    python3Packages.matplotlib
     nvtop
   ];
 
