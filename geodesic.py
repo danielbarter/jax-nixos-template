@@ -3,9 +3,10 @@ import jax.numpy as jnp
 import numpy as np
 
 @jax.jit
-def action(displacement, dt=1):
+def action(left_point, right_point):
+    displacement = right_point - left_point
     squares = displacement * displacement
-    return squares.sum() * dt
+    return squares.sum()
 
 @jax.jit
 def lagrangian(
@@ -14,18 +15,12 @@ def lagrangian(
         end):          # end point. fixed
 
 
-    accumulator = 0.0
-
-    displacement = points[0] - start
-    accumulator += action(displacement)
+    accumulator = action(start, points[0])
 
     for i in range(0, points.shape[0] - 1):
-        displacement = points[i+1] - points[i]
-        accumulator += action(displacement)
+        accumulator += action(points[i], points[i+1])
 
-
-    displacement = end - points[-1]
-    accumulator += action(displacement)
+    accumulator += action(points[-1], end)
 
     return accumulator
 
@@ -57,9 +52,10 @@ def run(initial_points, start, end, num_steps):
 
 num_points = 100
 dimension = 3000
+num_steps = 50000
 
 points = jax.random.normal(jax.random.PRNGKey(42), shape=(num_points,dimension))
 start = jnp.full(dimension, 0.0)
 end = jnp.full(dimension, 1.0)
 
-result, lagrangian_vals = run(points, start, end, 50000)
+result, lagrangian_vals = run(points, start, end, num_steps)
