@@ -19,10 +19,17 @@ def straight_line_test():
     fig.savefig("/tmp/straight_line_test.pdf")
 
 
+def contor_map(x_vals, y_vals):
+    z_vals = np.zeros((x_vals.shape[0], y_vals.shape[0]))
+    for i in range(x_vals.shape[0]):
+        for j in range(y_vals.shape[0]):
+            z_vals[j,i] = (test_saddle(np.array([x_vals[i],y_vals[j]])))
+    return z_vals
+
 def saddle_test_2d():
     num_points = 200
     dimension = 2
-    num_steps = 20000
+    num_steps = 10000
 
     points = jax.random.normal(jax.random.PRNGKey(42), shape=(num_points,dimension))
     start = jnp.array([0.5,-1.2])
@@ -35,11 +42,8 @@ def saddle_test_2d():
     axs[2].set_title("lagrangian values")
     x_vals = np.arange(-2.0,2.0,0.01)
     y_vals = np.arange(-2.0,2.0,0.01)
-    z_vals = np.zeros((x_vals.shape[0], y_vals.shape[0]))
-    # obviously, there is some better way of doing this
-    for i in range(x_vals.shape[0]):
-        for j in range(y_vals.shape[0]):
-            z_vals[j,i] = test_saddle(np.array([x_vals[i],y_vals[j]]))
+    z_vals = contor_map(x_vals, y_vals)
+
 
     axs[0].set_title("contor plot")
     axs[0].contour(x_vals, y_vals, z_vals)
